@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════ */
+/* BASE — Dark surface, crisp text                        */
+/* ═══════════════════════════════════════════════════════ */
+
+@layer base {
+  html {
+    @apply bg-surface text-text-primary antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  body {
+    @apply min-h-screen;
+  }
+
+  * {
+    @apply border-surface-border;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════ */
+/* COMPONENTS                                             */
+/* ═══════════════════════════════════════════════════════ */
+
+@layer components {
+  .card {
+    @apply bg-surface-card rounded-xl border border-surface-border p-4;
+  }
+
+  .card-elevated {
+    @apply bg-surface-elevated rounded-xl border border-surface-border p-4;
+  }
+
+  .value-bullish {
+    @apply text-bullish font-medium;
+  }
+
+  .value-bearish {
+    @apply text-bearish font-medium;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+  }
+
+  .badge-bullish {
+    @apply badge bg-bullish/10 text-bullish;
+  }
+
+  .badge-bearish {
+    @apply badge bg-bearish/10 text-bearish;
+  }
+
+  .badge-neutral {
+    @apply badge bg-accent-blue/10 text-accent-blue;
+  }
+
+  /* Subtle glow for important metrics */
+  .glow-bullish {
+    text-shadow: 0 0 12px rgba(0, 214, 143, 0.3);
+  }
+
+  .glow-bearish {
+    text-shadow: 0 0 12px rgba(255, 71, 87, 0.3);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════ */
+/* SCROLLBAR — thin, dark                                 */
+/* ═══════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e2333;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2a3048;
+}
+
+/* ═══════════════════════════════════════════════════════ */
+/* ANIMATIONS                                             */
+/* ═══════════════════════════════════════════════════════ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes pulse-subtle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 1.5s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════ */
+/* TABLE — option chain specific                          */
+/* ═══════════════════════════════════════════════════════ */
+
+.option-chain-table th {
+  @apply text-text-muted text-xs font-medium uppercase tracking-wider py-2 px-3;
+}
+
+.option-chain-table td {
+  @apply text-sm font-mono py-1.5 px-3 tabular-nums;
+}
