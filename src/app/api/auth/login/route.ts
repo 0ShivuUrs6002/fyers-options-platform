@@ -1,7 +1,7 @@
-/// GET /api/auth/login — Redirect to Fyers OAuth page.
+/// GET /api/auth/login — Returns Fyers OAuth URL.
 ///
-/// Generates a unique state parameter, stores it in session,
-/// and redirects the user to Fyers login.
+/// Instead of server-side redirect (which Cloudflare blocks),
+/// returns the URL for the client to navigate via window.location.
 
 import { NextResponse } from 'next/server';
 import { randomBytes } from 'crypto';
@@ -20,8 +20,8 @@ export async function GET() {
 
     const authUrl = generateAuthUrl(state);
 
-    console.log('[Auth] Redirecting to Fyers OAuth');
-    return NextResponse.redirect(authUrl);
+    console.log('[Auth] Returning Fyers OAuth URL for client redirect');
+    return NextResponse.json({ url: authUrl });
   } catch (err) {
     console.error('[Auth] Login error:', err);
     return NextResponse.json(

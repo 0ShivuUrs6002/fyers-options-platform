@@ -38,8 +38,16 @@ export function useAuth() {
     checkAuth();
   }, [checkAuth]);
 
-  const login = useCallback(() => {
-    window.location.href = '/api/auth/login';
+  const login = useCallback(async () => {
+    try {
+      const res = await fetch('/api/auth/login');
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      console.error('[Auth] Failed to get login URL');
+    }
   }, []);
 
   const logout = useCallback(async () => {
