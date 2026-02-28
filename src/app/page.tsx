@@ -2,11 +2,42 @@
 
 'use client';
 
+import { useMemo } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Dashboard } from '@/components/Dashboard';
 
+function generateState(): string {
+  const array = new Uint8Array(16);
+  crypto.getRandomValues(array);
+  return Array.from(array, (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
 export default function Home() {
-  const { authenticated, loading, login, logout } = useAuth();
+  const { authenticated, loading, logout } = useAuth();
+
+  // Build Fyers OAuth URL entirely client-side — no server call.
+  // This makes the <a href> a normal browser navigation that
+  // Cloudflare won't block.
+  const authUrl = useMemo(() => {
+    const appId = process.env.NEXT_PUBLIC_FYERS_APP_ID || '';
+    const redirectUri = process.env.NEXT_PUBLIC_FYERS_REDIRECT_URI || '';
+    if (!appId || !redirectUri) return '';
+
+    const state = generateState();
+    // Store state in sessionStorage for CSRF validation on callback
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('fyers_oauth_state', state);
+    }
+
+    const params = new URLSearchParams({
+      client_id: appId,
+      redirect_uri: redirectUri,
+      response_type: 'code',
+      state,
+    });
+
+    return `https://api-t1.fyers.in/api/v3/generate-authcode?${params.toString()}`;
+  }, []);
 
   // Loading check
   if (loading) {
@@ -34,12 +65,14 @@ export default function Home() {
             </p>
           </div>
 
-          <button
-            onClick={login}
-            className="w-full py-3 px-4 bg-accent-blue hover:bg-accent-blue/80 text-white rounded-lg font-medium text-sm transition-colors"
+          {/* REAL <a> tag — browser-native navigation, not JS redirect */}
+          <a
+            href={authUrl}
+            rel="noopener"
+            className="block w-full py-3 px-4 bg-accent-blue hover:bg-accent-blue/80 text-white rounded-lg font-medium text-sm transition-colors text-center"
           >
             Connect with Fyers
-          </button>
+          </a>
 
           <p className="text-text-muted text-xs leading-relaxed">
             Securely authenticate via Fyers OAuth 2.0.
