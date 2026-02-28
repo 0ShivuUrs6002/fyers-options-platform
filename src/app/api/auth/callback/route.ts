@@ -11,7 +11,8 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const authCode = url.searchParams.get('auth_code');
   const state = url.searchParams.get('state');
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
   if (!authCode) {
     console.error('[Auth] Callback missing auth_code');

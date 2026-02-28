@@ -1,7 +1,7 @@
 /// useAuth — Authentication state hook.
 ///
 /// Checks /api/auth/status on mount to determine if user
-/// is authenticated. Provides login/logout actions.
+/// is authenticated. Provides login/logout/saveToken actions.
 
 'use client';
 
@@ -55,5 +55,23 @@ export function useAuth() {
     setState({ authenticated: false, loading: false, expiresAt: null });
   }, []);
 
-  return { ...state, login, logout, checkAuth };
+  // Manual token entry — fallback when Cloudflare blocks OAuth
+  const saveToken = useCallback(async (accessToken: string): Promise<boolean> => {
+    try {
+      const res = await fetch('/api/auth/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accessToken }),
+      });
+      if (res.ok) {
+        await checkAuth();
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  }, [checkAuth]);
+
+  return { ...state, login, logout, checkAuth, saveToken };
 }
